@@ -5,7 +5,7 @@ const BUILD_DIR = path.resolve(__dirname, 'public/js');
 const APP_DIR = path.resolve(__dirname, 'app');
 
 const config = {
-  entry: APP_DIR + '/containers/AppContainer.jsx',
+  entry: APP_DIR + '/components/App/AppContainer.jsx',
   output: {
     path: BUILD_DIR,
     filename: 'bundle.js'

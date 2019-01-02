@@ -1,0 +1,128 @@
+:root {
+  --white: #fff;
+  --gray-light: rgb(159, 159, 159);
+  --gray: rgb(40, 40, 40);
+  --gray-medium: rgb(24, 24, 24);
+  --gray-dark: rgb(18, 18, 18);
+  --orange: rgb(255, 82, 34);
+
+  --spacer: 20px;
+
+  --font-family: 'Arial';
+  --font-size-base:             1rem; /* Assumes the browser default, typically `16px` */
+  --font-size-lg:               calc(var(--font-size-base) * 1.25);
+  --font-size-sm:               calc(var(--font-size-base) * .875);
+  --h1-font-size:               calc(var(--font-size-base) * 2.5);
+  --h2-font-size:               calc(var(--font-size-base) * 2);
+  --h3-font-size:               calc(var(--font-size-base) * 1.75);
+  --h4-font-size:               calc(var(--font-size-base) * 1.5);
+  --h5-font-size:               calc(var(--font-size-base) * 1.25);
+  --h6-font-size:               var(--font-size-base);
+
+  --body-color: var(--gray-medium);
+}
+
+body {
+  font-size: var(--font-size-base);
+  font-family: var(--font-family);
+  background-color: var(--body-color);
+  color: var(--white);
+}
+
+h1 {
+  font-size: var(--h1-font-size);
+}
+
+h2 {
+  font-size: var(--h2-font-size);
+}
+
+h3 {
+  font-size: var(--h3-font-size);
+}
+
+h4 {
+  font-size: var(--h4-font-size);
+}
+
+h5 {
+  font-size: var(--h5-font-size);
+}
+
+h6 {
+  font-size: var(--h6-font-size);
+}
+
+.clear {
+  clear: both;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.page {
+  padding: var(--spacer);
+}
+
+.page-header {
+  height: 212px;
+  padding-bottom: var(--spacer);
+  margin-bottom: var(--spacer);
+  border-bottom: 1px solid black;
+}
+
+.page-header__image {
+  height: 100%;
+  margin-right: var(--spacer);
+  float: left;
+}
+
+.page-header__main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.favorites__filter {
+  margin-bottom: var(--spacer);
+}
+
+.favorites__filter input {
+  width: 500px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: var(--spacer);
+}
+
+.table tbody tr {
+  border-top: 1px solid var(--gray-light);
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.table thead {
+  text-transform: uppercase;
+}
+
+.table th {
+  padding: 5px 10px;
+  font-size: var(--font-size-sm);
+  color: var(--gray-light);
+}
+
+.table td {
+  padding: 10px 10px;
+}

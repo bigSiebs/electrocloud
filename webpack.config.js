@@ -1,23 +1,28 @@
 const webpack = require('webpack');
 const path = require('path');
 
-const BUILD_DIR = path.resolve(__dirname, 'public/js');
-const APP_DIR = path.resolve(__dirname, 'app');
-
 const config = {
-  entry: `${APP_DIR}/components/App/AppContainer.jsx`,
+  target: 'electron-renderer',
+  mode: process.env.NODE_ENV || 'development',
+  entry: path.resolve(__dirname, 'src', 'index.js'),
   output: {
-    path: BUILD_DIR,
+    path: path.resolve(__dirname, 'public', 'js'),
     filename: 'bundle.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.jsx?/,
-        include: APP_DIR,
-        loader: 'babel-loader'
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader']
       }
     ]
+  },
+  resolve: {
+    alias: {
+      containers: path.resolve(__dirname, 'src', 'containers')
+    },
+    extensions: ['.js', '.jsx']
   }
 };
 

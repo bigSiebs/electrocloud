@@ -5,14 +5,13 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 // Module to register keyboard shortcuts.
 const globalShortcut = electron.globalShortcut;
-
+// Module to access session (and requests).
 const session = electron.session;
 
 const path = require('path');
 const url = require('url');
 const queryString = require('query-string');
 
-const SC = require('node-soundcloud');
 const { SOUNDCLOUD_API } = require('./src/constants');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -80,6 +79,9 @@ const createWindow = () => {
     accessToken = queryString.parse(hash).access_token;
 
     mainWindow.webContents.send('user-authenticated', accessToken);
+
+    closedByUser = false;
+    authWindow.close();
 
     //TODO: Remove login window, replace with main window
   };

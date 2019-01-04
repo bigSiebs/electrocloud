@@ -6,10 +6,13 @@ const BrowserWindow = electron.BrowserWindow;
 // Module to register keyboard shortcuts.
 const globalShortcut = electron.globalShortcut;
 
+const session = electron.session;
+
 const path = require('path');
 const url = require('url');
 const queryString = require('query-string');
 
+const SC = require('node-soundcloud');
 const { SOUNDCLOUD_API } = require('./src/constants');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -32,7 +35,7 @@ const createWindow = () => {
   });
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
@@ -42,33 +45,53 @@ const createWindow = () => {
     mainWindow = null
   });
 
-  // authWindow = new BrowserWindow({
-  //   width: 600,
-  //   height: 600,
-  //   frame: false,
-  //   webPreferences: {
-  //     nodeIntegration: false,
-  //     webSecurity: false,
-  //   },
+  // SC.init({
+  //   id: SOUNDCLOUD_API.CLIENT_ID,
+  //   secret: SOUNDCLOUD_API.CLIENT_SECRET,
+  //   uri: SOUNDCLOUD_API.REDIRECT_URI
   // });
 
-  // authWindow.loadURL(`${SOUNDCLOUD_API.AUTH_ENDPOINT}&client_id=${SOUNDCLOUD_API.CLIENT_ID}&redirect_uri=${encodeURIComponent(SOUNDCLOUD_API.REDIRECT_URI)}`);
-  // authWindow.show();
+  authWindow = new BrowserWindow({
+    width: 600,
+    height: 600,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: false,
+      webSecurity: false,
+    },
+  });
 
-  // contents = authWindow.webContents;
+  // const soundcloudAuthUrl = `https://soundcloud.com/connect?&client_id=${SOUNDCLOUD_API.CLIENT_ID}&redirect_uri=${encodeURIComponent(SOUNDCLOUD_API.REDIRECT_URI)}&response_type=token`;
+  const authUrl = `https://soundcloud.com/connect?client_id=${SOUNDCLOUD_API.CLIENT_ID}&response_type=code_and_token&scope=non-expiring&display=next&redirect_uri=${SOUNDCLOUD_API.REDIRECT_URI}`;
 
-  // contents.on('did-get-redirect-request', (e, oldUrl, newUrl) => {
-  //   const hashVars = queryString.parse(url.parse(newUrl).hash);
-  //   let accessToken;
+  authWindow.loadURL(authUrl);
+  authWindow.webContents.on('did-finish-load', () => {
+    authWindow.show();
+  });
 
-  //   if (!hashVars.access_token) {
-  //     return false;
-  //   }
+  let accessToken;
+  let connectError;
+  let authError;
+  let closedByUser = true;
 
-  //   accessToken = hashVars.access_token;
-  //   authWindow.destroy();
-  //   console.log(accessToken);
-  // });
+  const handleRedirect = (details) => {
+    const uri = url.parse(details.url);
+    const hash  = uri.hash.substr(1);
+    accessToken = queryString.parse(hash).access_token;
+
+    mainWindow.webContents.send('user-authenticated', accessToken);
+
+    //TODO: Remove login window, replace with main window
+  };
+
+  const filter = {
+    urls: [SOUNDCLOUD_API.REDIRECT_URI + '*']
+  };
+  // In an ideal world, we'd only need the first handler; the second is unique to our redirect uri
+  session.defaultSession.webRequest.onBeforeRedirect(filter, handleRedirect);
+  session.defaultSession.webRequest.onErrorOccurred(filter, handleRedirect);
+
+  authWindow.on('close', (event) => event.returnValue = closedByUser ? { error: 'The popup window was closed.' } : { accessToken, connectError });
 }
 
 // This method will be called when Electron has finished

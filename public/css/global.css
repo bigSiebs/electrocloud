@@ -12,6 +12,7 @@
   --font-size-base:             1rem; /* Assumes the browser default, typically `16px` */
   --font-size-lg:               calc(var(--font-size-base) * 1.25);
   --font-size-sm:               calc(var(--font-size-base) * .875);
+  --font-size-xs:               calc(var(--font-size-base) * .75);
   --h1-font-size:               calc(var(--font-size-base) * 2.5);
   --h2-font-size:               calc(var(--font-size-base) * 2);
   --h3-font-size:               calc(var(--font-size-base) * 1.75);
@@ -23,6 +24,8 @@
 }
 
 body {
+  width: 800px;
+  height: 600px;
   font-size: var(--font-size-base);
   font-family: var(--font-family);
   background-color: var(--body-color);
@@ -67,6 +70,33 @@ h6 {
 
 .text-right {
   text-align: right;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 72px;
+  text-align: center;
+}
+
+.progress__time {
+  font-size: var(--font-size-xs);
+}
+
+.progress-bar {
+  display: inline-block;
+  margin: 0 5px;
+  border-radius: 5px;
+  width: 80%;
+  height: 8px;
+  background-color: var(--gray);
+}
+
+.progress-bar__inner {
+  border-radius: inherit;
+  height: 100%;
+  background-color: var(--white);
 }
 
 .page {

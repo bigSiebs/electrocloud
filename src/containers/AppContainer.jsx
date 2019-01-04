@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
+import SC from 'node-soundcloud';
+import { SOUNDCLOUD_API } from '../constants.js';
 
 export default class AppContainer extends Component {
+  state = {
+    isAuthenticated: false
+  };
+
   componentDidMount() {
     const { ipcRenderer } = this.props;
     // var registered = globalShortcut.register('medianexttrack', function () {
@@ -12,8 +18,14 @@ export default class AppContainer extends Component {
     //   console.log('medianexttrack registration bound!');
     // }
 
-    ipcRenderer.on('user-authenticated', (event, message) => {
-      console.log(event, message);
+    ipcRenderer.on('user-authenticated', (event, accessToken) => {
+      SC.init({
+        id: SOUNDCLOUD_API.CLIENT_ID,
+        secret: SOUNDCLOUD_API.CLIENT_SECRET,
+        uri: SOUNDCLOUD_API.REDIRECT_URI,
+        accessToken: accessToken,
+      });
+      this.setState({ isAuthenticated: true });
     });
 
     ipcRenderer.on('mediaplaypause', (event) => {
@@ -41,7 +53,7 @@ export default class AppContainer extends Component {
 
   render() {
     return (
-      <div>My app will go here.</div>
+      <div>{this.state.isAuthenticated ? 'Thanks for logging in!' : 'You are not logged in.'}</div>
     );
   }
 }

@@ -12,6 +12,10 @@ export default class AppContainer extends Component {
     //   console.log('medianexttrack registration bound!');
     // }
 
+    ipcRenderer.on('user-authenticated', (event, message) => {
+      console.log(event, message);
+    });
+
     ipcRenderer.on('mediaplaypause', (event) => {
       console.log(event);
     });

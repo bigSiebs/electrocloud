@@ -3,4 +3,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import AppContainer from 'containers/AppContainer';
 
-ReactDOM.render(<AppContainer ipcRenderer={ipcRenderer} />, document.getElementById('app'));
+import { fontAwesome } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faPause, faFastForward, faFastBackward } from '@fortawesome/free-solid-svg-icons';
+
+fontAwesome.add(faPlay, faPause, faFastForward, faFastBackward);
+
+ReactDOM.render(
+  <AppContainer ipcRenderer={ipcRenderer} />,
+  document.getElementById('app')
+);

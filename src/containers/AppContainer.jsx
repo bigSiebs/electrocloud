@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import SC from 'node-soundcloud';
 import { SOUNDCLOUD_API } from '../constants.js';
+import App from 'components/App';
 
 export default class AppContainer extends Component {
   state = {
@@ -52,8 +53,6 @@ export default class AppContainer extends Component {
   }
 
   render() {
-    return (
-      <div>{this.state.isAuthenticated ? 'Thanks for logging in!' : 'You are not logged in.'}</div>
-    );
+    return <App isAuthenticated={this.state.isAuthenticated} />;
   }
 }

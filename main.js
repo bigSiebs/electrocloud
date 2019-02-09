@@ -19,6 +19,8 @@ const { SOUNDCLOUD_API } = require('./src/constants');
 let mainWindow;
 let authWindow;
 
+// TODO: Change flow: Check if they're logged in. If no, show login window; if yes, show main window.
+// TODO: If login window is closed, quit app. If main window is closed, just close window.
 const createWindow = () => {
   let contents;
 
@@ -43,12 +45,6 @@ const createWindow = () => {
     // when you should delete the corresponding element.
     mainWindow = null
   });
-
-  // SC.init({
-  //   id: SOUNDCLOUD_API.CLIENT_ID,
-  //   secret: SOUNDCLOUD_API.CLIENT_SECRET,
-  //   uri: SOUNDCLOUD_API.REDIRECT_URI
-  // });
 
   authWindow = new BrowserWindow({
     width: 600,
@@ -83,7 +79,7 @@ const createWindow = () => {
     closedByUser = false;
     authWindow.close();
 
-    //TODO: Remove login window, replace with main window
+    //TODO: Remove login window, replace with main window -- dont worry about closedByUser stuff
   };
 
   const filter = {

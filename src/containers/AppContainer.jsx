@@ -1,23 +1,18 @@
 import React, { Component } from 'react';
 import SC from 'node-soundcloud';
 import { SOUNDCLOUD_API } from '../constants.js';
-import App from 'components/App';
+import App from '../components/App';
 
-export default class AppContainer extends Component {
+class AppContainer extends Component {
   state = {
-    isAuthenticated: false
+    isAuthenticated: false,
+    isPlaying: false,
+    elapsedSeconds: 0,
+    totalSeconds: 180,
   };
 
   componentDidMount() {
     const { ipcRenderer } = this.props;
-    // var registered = globalShortcut.register('medianexttrack', function () {
-    // console.log('medianexttrack pressed');
-    // });
-    // if (!registered) {
-    //   console.log('medianexttrack registration failed');
-    // } else {
-    //   console.log('medianexttrack registration bound!');
-    // }
 
     ipcRenderer.on('user-authenticated', (event, accessToken) => {
       SC.init({
@@ -30,29 +25,60 @@ export default class AppContainer extends Component {
     });
 
     ipcRenderer.on('mediaplaypause', (event) => {
-      console.log(event);
+      this.handlePlayClick(event);
     });
 
-    // var registered = globalShortcut.register('mediaprevioustrack', function () {
-    //   console.log('mediaprevioustrack pressed');
-    // });
-    // if (!registered) {
-    //   console.log('mediaprevioustrack registration failed');
-    // } else {
-    //   console.log('mediaprevioustrack registration bound!');
-    // }
+    ipcRenderer.on('mediaprevioustrack', (event) => {
+      this.handleFastBackwardClick(event);
+    });
 
-    // var registered = globalShortcut.register('mediastop', function () {
-    //   console.log('mediastop pressed');
-    // });
-    // if (!registered) {
-    //   console.log('mediastop registration failed');
-    // } else {
-    //   console.log('mediastop registration bound!');
-    // }
+    ipcRenderer.on('medianexttrack', (event) => {
+      this.handleFastForwardClick(event);
+    });
+
+    this.timer = setInterval(this.tick, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  handlePlayClick = (e) => {
+    this.setState((prevState) => ({ isPlaying: !prevState.isPlaying }));
+  }
+
+  handleFastBackwardClick = (e) => {
+    this.setState({ elapsedSeconds: 0 });
+  }
+
+  handleFastForwardClick = (e) => {
+    this.setState({ elapsedSeconds: 0 });
+  }
+
+  tick = () => {
+    if (!this.state.isPlaying) {
+      return false;
+    }
+
+    this.setState((prevState) => ({
+      elapsedSeconds: prevState.elapsedSeconds === prevState.totalSeconds ? 0 : ++prevState.elapsedSeconds,
+    }));
   }
 
   render() {
-    return <App isAuthenticated={this.state.isAuthenticated} />;
+    return (
+      <App
+        isAuthenticated={this.state.isAuthenticated}
+        sound={{ user: "Cypress Hill", name: "Hits from the Bong" }}
+        isPlaying={this.state.isPlaying}
+        elapsedSeconds={this.state.elapsedSeconds}
+        totalSeconds={this.state.totalSeconds}
+        onPlayClick={this.handlePlayClick}
+        onFastBackwardClick={this.handleFastBackwardClick}
+        onFastForwardClick={this.handleFastForwardClick}
+      />
+    );
   }
 }
+
+export default AppContainer;

@@ -11,6 +11,7 @@ const session = electron.session;
 const path = require('path');
 const url = require('url');
 const queryString = require('query-string');
+const isDev = require('electron-is-dev');
 
 const { SOUNDCLOUD_API } = require('./src/constants');
 
@@ -25,14 +26,24 @@ const createWindow = () => {
   let contents;
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 800, height: 600 });
+  mainWindow = new BrowserWindow({ width: 400, height: 400 });
 
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html');
+  if (isDev) {
+    mainWindow.loadURL('http://localhost:3000');
+  } else {
+    mainWindow.loadFile('build/index.html');
+  }
 
   // Register keyboard shortcuts.
   globalShortcut.register('mediaplaypause', () => {
     mainWindow.webContents.send('mediaplaypause');
+  });
+  globalShortcut.register('mediaprevioustrack', () => {
+    mainWindow.webContents.send('mediaprevioustrack');
+  });
+  globalShortcut.register('medianexttrack', () => {
+    mainWindow.webContents.send('medianexttrack');
   });
 
   // Open the DevTools.

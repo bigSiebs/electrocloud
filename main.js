@@ -1,11 +1,10 @@
 require('dotenv').config();
-const electron = require('electron');
 // Modules to control application life, native browser window, keyboard shortcuts, and session/requests
-const { app, BrowserWindow, globalShortcut, session } = electron;
+const { app, BrowserWindow, globalShortcut, session } = require('electron');
+const isDev = require('electron-is-dev');
 const path = require('path');
 const url = require('url');
 const queryString = require('query-string');
-const isDev = require('electron-is-dev');
 const UserStore = require('./src/data/UserStore');
 const { AUTHORIZATION_URL, CONFIG_FILENAME } = require('./src/constants');
 
@@ -24,17 +23,19 @@ const userStore = new UserStore({
 // TODO: Change flow: Check if they're logged in. If no, show login window; if yes, show main window.
 // TODO: If login window is closed, quit app. If main window is closed, just close window.
 const createWindow = () => {
-  let contents;
+  if (isDev) {
+    const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+    installExtension(REACT_DEVELOPER_TOOLS).then(name => {
+      console.log(`Added Extension: ${name}`);
+    }).catch(err => {
+      console.log('An error occurred: ', err);
+    });
+  }
 
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: 400, height: 400 });
-
   // and load the index.html of the app.
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:3000');
-  } else {
-    mainWindow.loadFile('build/index.html');
-  }
+  mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, 'build/index.html')}`);
 
   // Register keyboard shortcuts.
   globalShortcut.register('mediaplaypause', () => {
@@ -68,8 +69,6 @@ const createWindow = () => {
     },
   });
 
-  authWindow.loadURL(AUTHORIZATION_URL);
-
   authWindow.webContents.on('did-finish-load', () => {
     authWindow.show();
   });
@@ -93,7 +92,7 @@ const createWindow = () => {
     //TODO: Remove login window, replace with main window -- dont worry about closedByUser stuff
   };
 
-  const filter = 
+  const filter = {
     urls: [`${process.env.SOUNDCLOUD_REDIRECT_URI}*`]
   };
   // In an ideal world, we'd only need the first handler; the second is unique to our redirect uri
@@ -101,6 +100,12 @@ const createWindow = () => {
   session.defaultSession.webRequest.onErrorOccurred(filter, handleRedirect);
 
   authWindow.on('close', (event) => event.returnValue = closedByUser ? { error: 'The popup window was closed.' } : { accessToken, connectError });
+
+  if (userStore.get('accessToken')) {
+    mainWindow.webContents.send('user-authenticated', userStore.get('accessToken'));
+  } else {
+    authWindow.loadURL(AUTHORIZATION_URL);
+  }
 }
 
 // This method will be called when Electron has finished

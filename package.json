@@ -1,38 +1,29 @@
 {
-  "name": "Electrocloud",
+  "name": "electrocloud",
   "version": "0.1.0",
   "private": true,
-  "main": "main.js",
+  "homepage": "./",
+  "main": "./main.js",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.14",
     "@fortawesome/free-solid-svg-icons": "^5.7.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
-    "dotenv": "^7.0.0",
     "electron": "^4.0.4",
+    "electron-devtools-installer": "^2.2.4",
     "electron-is-dev": "^1.0.1",
     "node-soundcloud": "^0.0.6",
     "path": "^0.12.7",
     "query-string": "^6.2.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "react-scripts": "2.1.3"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/plugin-proposal-class-properties": "^7.2.3",
-    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
-    "@babel/preset-env": "^7.2.3",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.4",
-    "webpack": "^4.28.3",
-    "webpack-cli": "^3.1.2"
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "2.1.8"
   },
   "scripts": {
+    "dev": "react-scripts start",
     "start": "concurrently \"cross-env BROWSER=none yarn react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "launch": "electron ."
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

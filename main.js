@@ -92,7 +92,6 @@ const createWindow = () => {
   const handleRedirect = (details) => {
     const uri = url.parse(details.url);
     const hash  = uri.hash.substr(1);
-console.log(queryString.parse(hash));
     accessToken = queryString.parse(hash).access_token;
 
     userStore.set('accessToken', accessToken);

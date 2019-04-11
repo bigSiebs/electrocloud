@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import SC from 'node-soundcloud';
-import { SOUNDCLOUD_API } from '../constants.js';
 import App from '../components/App';
 
 class AppContainer extends Component {

@@ -79,6 +79,7 @@ h6 {
 }
 
 .player {
+<<<<<<< HEAD
   text-align: center;
 }
 
@@ -125,6 +126,13 @@ h6 {
 .btn-outline {
   border-width: 1px;
   border-color: var(--white);
+=======
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 72px;
+  text-align: center;
+>>>>>>> bed9c8e9c8f25b69c97fe6899cb0ffc2b37c248e
 }
 
 .progress__time {

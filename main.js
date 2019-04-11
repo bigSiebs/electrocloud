@@ -1,16 +1,12 @@
 require('dotenv').config();
-console.log(process.env);
 const electron = require('electron');
 // Modules to control application life, native browser window, keyboard shortcuts, and session/requests
 const { app, BrowserWindow, globalShortcut, session } = electron;
-
 const path = require('path');
 const url = require('url');
 const queryString = require('query-string');
 const isDev = require('electron-is-dev');
-
 const UserStore = require('./src/data/UserStore');
-
 const { AUTHORIZATION_URL, CONFIG_FILENAME } = require('./src/constants');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -73,6 +69,7 @@ const createWindow = () => {
   });
 
   authWindow.loadURL(AUTHORIZATION_URL);
+
   authWindow.webContents.on('did-finish-load', () => {
     authWindow.show();
   });
@@ -86,9 +83,8 @@ const createWindow = () => {
     const uri = url.parse(details.url);
     const hash  = uri.hash.substr(1);
     accessToken = queryString.parse(hash).access_token;
-
+    // Store the access token and send it to the frontend
     userStore.set('accessToken', accessToken);
-
     mainWindow.webContents.send('user-authenticated', accessToken);
 
     closedByUser = false;
@@ -97,7 +93,7 @@ const createWindow = () => {
     //TODO: Remove login window, replace with main window -- dont worry about closedByUser stuff
   };
 
-  const filter = {
+  const filter = 
     urls: [`${process.env.SOUNDCLOUD_REDIRECT_URI}*`]
   };
   // In an ideal world, we'd only need the first handler; the second is unique to our redirect uri

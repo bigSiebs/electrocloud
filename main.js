@@ -13,12 +13,21 @@ const url = require('url');
 const queryString = require('query-string');
 const isDev = require('electron-is-dev');
 
-const { SOUNDCLOUD_API } = require('./src/constants');
+const UserStore = require('./src/data/UserStore');
+
+const { SOUNDCLOUD_API, CONFIG_FILENAME } = require('./src/constants');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let authWindow;
+
+const userStore = new UserStore({
+  configName: CONFIG_FILENAME,
+  defaults: {
+    accessToken: null,
+  },
+});
 
 // TODO: Change flow: Check if they're logged in. If no, show login window; if yes, show main window.
 // TODO: If login window is closed, quit app. If main window is closed, just close window.
@@ -83,7 +92,10 @@ const createWindow = () => {
   const handleRedirect = (details) => {
     const uri = url.parse(details.url);
     const hash  = uri.hash.substr(1);
+console.log(queryString.parse(hash));
     accessToken = queryString.parse(hash).access_token;
+
+    userStore.set('accessToken', accessToken);
 
     mainWindow.webContents.send('user-authenticated', accessToken);
 

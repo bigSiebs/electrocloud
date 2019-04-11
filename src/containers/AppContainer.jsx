@@ -16,11 +16,16 @@ class AppContainer extends Component {
 
     ipcRenderer.on('user-authenticated', (event, accessToken) => {
       SC.init({
-        id: SOUNDCLOUD_API.CLIENT_ID,
-        secret: SOUNDCLOUD_API.CLIENT_SECRET,
-        uri: SOUNDCLOUD_API.REDIRECT_URI,
+        id: process.env.SOUNDCLOUD_CLIENT_ID,
+        secret: process.env.SOUNDCLOUD_CLIENT_SECRET,
+        uri: process.env.SOUNDCLOUD_REDIRECT_URI,
         accessToken: accessToken,
       });
+
+      SC.getMe((error, user) => {
+        console.log(error, user);
+      });
+
       this.setState({ isAuthenticated: true });
     });
 

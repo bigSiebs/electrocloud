@@ -1,12 +1,8 @@
+require('dotenv').config();
+console.log(process.env);
 const electron = require('electron');
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
-// Module to register keyboard shortcuts.
-const globalShortcut = electron.globalShortcut;
-// Module to access session (and requests).
-const session = electron.session;
+// Modules to control application life, native browser window, keyboard shortcuts, and session/requests
+const { app, BrowserWindow, globalShortcut, session } = electron;
 
 const path = require('path');
 const url = require('url');
@@ -15,7 +11,7 @@ const isDev = require('electron-is-dev');
 
 const UserStore = require('./src/data/UserStore');
 
-const { SOUNDCLOUD_API, CONFIG_FILENAME } = require('./src/constants');
+const { AUTHORIZATION_URL, CONFIG_FILENAME } = require('./src/constants');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -76,10 +72,7 @@ const createWindow = () => {
     },
   });
 
-  // const soundcloudAuthUrl = `https://soundcloud.com/connect?&client_id=${SOUNDCLOUD_API.CLIENT_ID}&redirect_uri=${encodeURIComponent(SOUNDCLOUD_API.REDIRECT_URI)}&response_type=token`;
-  const authUrl = `https://soundcloud.com/connect?client_id=${SOUNDCLOUD_API.CLIENT_ID}&response_type=code_and_token&scope=non-expiring&display=next&redirect_uri=${SOUNDCLOUD_API.REDIRECT_URI}`;
-
-  authWindow.loadURL(authUrl);
+  authWindow.loadURL(AUTHORIZATION_URL);
   authWindow.webContents.on('did-finish-load', () => {
     authWindow.show();
   });
@@ -105,7 +98,7 @@ const createWindow = () => {
   };
 
   const filter = {
-    urls: [SOUNDCLOUD_API.REDIRECT_URI + '*']
+    urls: [`${process.env.SOUNDCLOUD_REDIRECT_URI}*`]
   };
   // In an ideal world, we'd only need the first handler; the second is unique to our redirect uri
   session.defaultSession.webRequest.onBeforeRedirect(filter, handleRedirect);

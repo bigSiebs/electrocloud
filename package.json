@@ -7,6 +7,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.14",
     "@fortawesome/free-solid-svg-icons": "^5.7.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "dotenv": "^7.0.0",
     "electron": "^4.0.4",
     "electron-is-dev": "^1.0.1",
     "node-soundcloud": "^0.0.6",

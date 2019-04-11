@@ -1,9 +1,4 @@
 module.exports = {
+  AUTHORIZATION_URL: `https://soundcloud.com/connect?client_id=${process.env.SOUNDCLOUD_CLIENT_ID}&response_type=code_and_token&scope=non-expiring&display=next&redirect_uri=${process.env.SOUNDCLOUD_REDIRECT_URI}`,
   CONFIG_FILENAME: 'user-preferences',
-	SOUNDCLOUD_API: {
-		AUTH_ENDPOINT: 'https://soundcloud.com/connect?response_type=token',
-		CLIENT_ID: 'GNMMEj7ThwTWm6pFWP6cc3W8ofTDjrnf',
-		CLIENT_SECRET: 'DHlZqDE1XTozyddO1wOwbUiLXp0Fr15z',
-		REDIRECT_URI: 'https://localhost/authenticate',
-	},
 };

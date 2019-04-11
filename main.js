@@ -20,9 +20,7 @@ const userStore = new UserStore({
   },
 });
 
-// TODO: Change flow: Check if they're logged in. If no, show login window; if yes, show main window.
-// TODO: If login window is closed, quit app. If main window is closed, just close window.
-const createWindow = () => {
+const initApp = () => {
   if (isDev) {
     const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
     installExtension(REACT_DEVELOPER_TOOLS).then(name => {
@@ -32,6 +30,16 @@ const createWindow = () => {
     });
   }
 
+  if (userStore.get('accessToken')) {
+    createMainWindow();
+  } else {
+    createAuthWindow();
+    authWindow.loadURL(AUTHORIZATION_URL);
+  }
+};
+
+// TODO: If login window is closed, quit app. If main window is closed, just close window.
+const createMainWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: 400, height: 400 });
   // and load the index.html of the app.
@@ -48,6 +56,9 @@ const createWindow = () => {
     mainWindow.webContents.send('medianexttrack');
   });
 
+  // Transmit accessToken to the renderer
+  mainWindow.webContents.send('user-authenticated', userStore.get('accessToken'));
+
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
@@ -58,7 +69,9 @@ const createWindow = () => {
     // when you should delete the corresponding element.
     mainWindow = null
   });
+};
 
+const createAuthWindow = () => {
   authWindow = new BrowserWindow({
     width: 600,
     height: 600,
@@ -69,27 +82,20 @@ const createWindow = () => {
     },
   });
 
+  authWindow.loadURL(AUTHORIZATION_URL);
   authWindow.webContents.on('did-finish-load', () => {
     authWindow.show();
   });
-
-  let accessToken;
-  let connectError;
-  let authError;
-  let closedByUser = true;
 
   const handleRedirect = (details) => {
     const uri = url.parse(details.url);
     const hash  = uri.hash.substr(1);
     accessToken = queryString.parse(hash).access_token;
-    // Store the access token and send it to the frontend
+    // Store the access token
     userStore.set('accessToken', accessToken);
-    mainWindow.webContents.send('user-authenticated', accessToken);
 
-    closedByUser = false;
     authWindow.close();
-
-    //TODO: Remove login window, replace with main window -- dont worry about closedByUser stuff
+    createMainWindow();
   };
 
   const filter = {
@@ -99,19 +105,13 @@ const createWindow = () => {
   session.defaultSession.webRequest.onBeforeRedirect(filter, handleRedirect);
   session.defaultSession.webRequest.onErrorOccurred(filter, handleRedirect);
 
-  authWindow.on('close', (event) => event.returnValue = closedByUser ? { error: 'The popup window was closed.' } : { accessToken, connectError });
-
-  if (userStore.get('accessToken')) {
-    mainWindow.webContents.send('user-authenticated', userStore.get('accessToken'));
-  } else {
-    authWindow.loadURL(AUTHORIZATION_URL);
-  }
-}
+  // TODO: If auth window is closed manually, quit app
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', initApp);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -126,7 +126,7 @@ app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow();
+    initApp();
   }
 });
 
